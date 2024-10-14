@@ -3,8 +3,8 @@ let heightFactor = 0.75;
 
 let config = {
     type: Phaser.WEBGL,
-    width: 1216 * widthFactor,
-    height: 896 * heightFactor,
+    width: 1280 * widthFactor,
+    height: 960 * heightFactor,
     pixelArt: true,
     scale: {
         //mode: Phaser.Scale.FIT,

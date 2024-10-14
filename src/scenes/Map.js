@@ -33,6 +33,7 @@ class Map extends Phaser.Scene {
         this.height = (15 * heightFactor) / this.scaleFactor;
 
         let water = [186, 202, 203];
+        let blank = -1;
 
         let landArr = [5, 6, 7];
         let landOffset = 0;
@@ -53,32 +54,45 @@ class Map extends Phaser.Scene {
             for (let j = 0; j < this.width; j++) {
                 let x = this.noiseValue(i, j);
 
-                let tile;
-
-                // Technically, the edges of the map are offscreen.
-
-                // This is because there are certain edge cases due to the nature of how adjacent tiles are limited by the map's boundaries.
-                // This is strictly a limitation of the tilesheet given (there are no tiles that can represent an extension of a tile type in one tile width direction)
-
-                tile = this.threeSection(x, worldSyms);
+                let tile = this.threeSection(x, worldSyms);
 
                 arr[i].push(tile);
             }
         }
 
-        // arrValues determines specific tiles to be used based on the tile types determined by arr
-        const arrValues = [];
+        // copy the value of arr to landSpecifics
+        let landSpecifics = arr.map(function(arr) {
+            return arr.slice();
+        });
+
+        // change all mountain tiles to land tiles in landSpecifics
         for (let i = 0; i < this.height; i++) {
-            arrValues.push([]);
+            for (let j = 0; j < this.width; j++) {
+                if (landSpecifics[i][j] === '^') {
+                    landSpecifics[i][j] = '-';
+                }
+            }
+        }
+
+        // arrValues determines specific tiles to be used based on the tile types determined by arr
+        const waterLayer = [];
+        const landLayer = [];
+        const mountainLayer = [];
+        for (let i = 0; i < this.height; i++) {
+            waterLayer.push([]);
+            landLayer.push([]);
+            mountainLayer.push([]);
             for (let j = 0; j < this.width; j++) {
                 let char = arr[i][j];
 
                 let type = this.tileType(char);
 
-                let code = this.tileCode(arr, i, j, char);
+                let code = type == land ? this.tileCode(landSpecifics, i, j, char) : this.tileCode(arr, i, j, char);
 
-                if (type === water || lookup[code] === null) {
-                    arrValues[i].push(this.threeSection(this.noiseValue(i, j), water));
+                if (lookup[code] === null) {
+                    waterLayer[i].push(this.threeSection(this.noiseValue(i, j), water));
+                    landLayer[i].push(blank);
+                    mountainLayer[i].push(blank);
                     continue;
                 }
 
@@ -86,21 +100,56 @@ class Map extends Phaser.Scene {
 
                 let tile = type !== water ? type[y][x] : this.threeSection(this.noiseValue(i, j), water);
 
-                arrValues[i].push(tile);
+                if (type == land) {
+                    landLayer[i].push(tile);
+                    mountainLayer[i].push(blank);
+                } else if (type == mountain) {
+                    landLayer[i].push(land[1][1]);
+                    mountainLayer[i].push(tile);
+                } else {
+                    landLayer[i].push(blank);
+                    mountainLayer[i].push(blank);
+                }
+
+                waterLayer[i].push(this.threeSection(this.noiseValue(i, j), water));
             }
         }
 
-        const map = this.make.tilemap({
-            data: arrValues,      // load direct from array
+        const waterMap = this.make.tilemap({
+            data: waterLayer,      // load direct from array
             tileWidth: 64,
             tileHeight: 64
         })
 
-        const tilesheet = map.addTilesetImage('tiles');
+        const tilesheet = waterMap.addTilesetImage('tiles');
 
-        const layer = map.createLayer(0, tilesheet, 0, 0);
+        const wlayer = waterMap.createLayer(0, tilesheet, 0, 0);
 
-        layer.setScale(this.scaleFactor);
+        wlayer.setScale(this.scaleFactor);
+
+        const landMap = this.make.tilemap({
+            data: landLayer,
+            tileWidth: 64,
+            tileHeight: 64
+        })
+
+        const landTilesheet = landMap.addTilesetImage('tiles');
+
+        const llayer = landMap.createLayer(0, landTilesheet, 0, 0);
+        
+        llayer.setScale(this.scaleFactor);
+
+        const mountainMap = this.make.tilemap({
+            data: mountainLayer,
+            tileWidth: 64,
+            tileHeight: 64
+        })
+
+        const mountainTilesheet = mountainMap.addTilesetImage('tiles');
+
+        const mlayer = mountainMap.createLayer(0, mountainTilesheet, 0, 0);
+
+        mlayer.setScale(this.scaleFactor);
 
         this.reload = this.input.keyboard.addKey('R')
     }
