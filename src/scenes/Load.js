@@ -4,6 +4,9 @@ class Load extends Phaser.Scene {
     }
 
     preload() {
+        this.load.path = './assets/kenney_map-pack/Tilesheet/';
+        this.load.image('tiles', 'mapPack_tilesheet.png');
+
         // loading bar
         // See: https://rexrainbow.github.io/phaser3-rex-notes/docs/site/loader/
         let loadingBar = this.add.graphics();
@@ -18,6 +21,6 @@ class Load extends Phaser.Scene {
     }
 
     create() {
-        
+        this.scene.start('mapScene');
     }
 }
