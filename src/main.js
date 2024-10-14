@@ -1,7 +1,10 @@
+let widthFactor = 1;
+let heightFactor = 0.75;
+
 let config = {
     type: Phaser.WEBGL,
-    width: 1200,
-    height: 675,
+    width: 1216 * widthFactor,
+    height: 896 * heightFactor,
     pixelArt: true,
     scale: {
         //mode: Phaser.Scale.FIT,
