@@ -6,6 +6,7 @@ let config = {
     width: 1280 * widthFactor,
     height: 960 * heightFactor,
     pixelArt: true,
+    parent: 'game',
     scale: {
         //mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER
@@ -43,6 +44,9 @@ const landDecorOffset = 2;
 
 const mountainDecorArr = [8, 9];
 const mountainDecorOffset = 6;
+
+const playerArr = [15, 16];
+const playerArrOffset = 8;
 
 let worldSyms = ['~', '-', '^'];
 
@@ -91,3 +95,26 @@ let waterThreshold = 85;
 let landThreshold = 170;
 
 let mountainThreshold = 255;
+
+// Place text below the game canvas to display instructions
+let instructions = document.createElement('div');
+instructions.innerHTML = 'Use the <strong>comma (,)</strong> and <strong>period (.)</strong> keys to adjust the noise sample window size. Use the <strong>R</strong> key to reseed the map.';
+document.body.appendChild(instructions);
+
+// Place text below instructions for player controls
+let controls = document.createElement('div');
+controls.innerHTML = 'Use the <strong>WASD</strong> to move the player.';
+document.body.appendChild(controls);
+
+// Create drop down menu for player sprites
+let playerSprites = document.createElement('select');
+playerSprites.id = 'playerSprites';
+// add 4 players to the drop down menu
+playerSprites.innerHTML = '<option value="0">Player 1</option><option value="1">Player 2</option><option value="2">Player 3</option><option value="3">Player 4</option>';
+document.body.appendChild(playerSprites);
+
+let selectedSprite = 0;
+
+document.getElementById('playerSprites').addEventListener('change', function() {
+    selectedSprite = this.value;
+});

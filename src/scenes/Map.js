@@ -4,6 +4,8 @@ class Map extends Phaser.Scene {
     }
 
     create() {
+        this.map = null;
+
         this.reseed();
 
         this.scaleFactor = 0.5;
@@ -32,6 +34,9 @@ class Map extends Phaser.Scene {
         this.noiseSampleWindowText = this.add.text(10, 10, 'Noise Sample Window: ' + noiseSampleWindow, { fontFamily: 'Arial', fontSize: '24px', color: '#000000' });
         // Set depth to 1 so it appears above the map
         this.noiseSampleWindowText.setDepth(2);
+
+        // Create Player
+        this.player = new Player(this, 0, 0);
     }
 
     generateMap() {
@@ -48,6 +53,8 @@ class Map extends Phaser.Scene {
                 arr[i].push(tile);
             }
         }
+
+        this.map = arr;
 
         // copy the value of arr to landSpecifics
         let landSpecifics = arr.map(function(arr) {
@@ -169,6 +176,8 @@ class Map extends Phaser.Scene {
             this.noiseSampleWindowText.text = 'Noise Sample Window: ' + noiseSampleWindow;
             this.generateMap();
         }
+
+        this.player.changeSprite();
     }
 
     noiseValue(i, j) {
