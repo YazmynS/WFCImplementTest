@@ -1,5 +1,5 @@
 let widthFactor = 1;
-let heightFactor = 0.75;
+let heightFactor = 1;
 
 let config = {
     type: Phaser.WEBGL,
@@ -33,7 +33,7 @@ const tileSize = 64;
 const gap = 17;
 const blank = -1;
 
-const landArr = [5, 6, 7];
+const landArr = [5, 6, 7]; //Top left, top middle, top right, top 
 const landOffset = 0;
 
 const mountainArr = [5, 6, 7];
